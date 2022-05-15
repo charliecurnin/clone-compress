@@ -21,4 +21,4 @@ def preprocess(wav):
   ])
   print("pp wav len: ", len(wav))
 
-  return wav #, len(speech_intervals)
+  return speech_intervals #, len(speech_intervals)
