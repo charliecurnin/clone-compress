@@ -14,9 +14,11 @@ def preprocess(wav):
   Borrowed from code I wrote for CS 224S HW1
   """
 
+  print("wav len: ", len(wav))
   speech_intervals = librosa.effects.split(wav)
   wav = np.concatenate([
     wav[start_i:end_i] for (start_i, end_i) in speech_intervals
   ])
+  print("pp wav len: ", len(wav))
 
-  return wav, len(speech_intervals)
+  return wav #, len(speech_intervals)
