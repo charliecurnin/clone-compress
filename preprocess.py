@@ -19,4 +19,4 @@ def preprocess(wav):
     wav[start_i:end_i] for (start_i, end_i) in speech_intervals
   ])
 
-  return wav
+  return wav, len(speech_ints)
