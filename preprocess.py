@@ -16,7 +16,7 @@ def preprocess(wav):
 
   speech_intervals = librosa.effects.split(wav)
   wav = np.concatenate([
-    wav[start_i:end_i] for (start_i, end_i_ in speech_intervals
+    wav[start_i:end_i] for (start_i, end_i) in speech_intervals
   ])
 
   return wav
