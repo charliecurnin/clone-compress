@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import librosa
+
 def get_clip(wav_path):
   
   audio_ex, sr = librosa.load(agent_audio_file)
