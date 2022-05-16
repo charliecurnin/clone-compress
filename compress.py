@@ -34,7 +34,7 @@ def upload_to_gcp(wav_path, credentials):
 
   bucket = storage.Client(credentials=credentials).bucket(DATA_BUCKET_NAME)
   blob = bucket.blob(destination_name)
-  blob.upload_from_filename(agent_audio_file)
+  blob.upload_from_filename(wav_path)
   
   return destination_uri 
 
