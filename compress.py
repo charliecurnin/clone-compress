@@ -19,7 +19,7 @@ def get_clip(wav_path):
   audio_clip = audio_ex[:n_frames]
   return audio_clip
 
-def upload_to_gcp(wav_path, gcp_creds_path):
+def upload_to_gcp(wav_path, credentials):
   """
   Upload to GCP (since must upload files >60s anyway)
   """
@@ -32,24 +32,21 @@ def upload_to_gcp(wav_path, gcp_creds_path):
   destination_name = f"{speaker_role}-{wav_name}"
   destination_uri = f"gs://${DATA_BUCKET_NAME}/${destination_name}"
 
-  bucket = storage.Client(credentials=gcp_creds_path).bucket(DATA_BUCKET_NAME)
+  bucket = storage.Client(credentials=credentials).bucket(DATA_BUCKET_NAME)
   blob = bucket.blob(destination_name)
   blob.upload_from_filename(agent_audio_file)
   
   return destination_uri 
 
-def get_transcript(wav_path, gcp_creds_path):
+def get_transcript(wav_path, credentials):
   """
   Use GCP Speech-to-Text API to transcribe audio
   Following example here: https://cloud.google.com/speech-to-text/docs/samples/
     speech-transcribe-sync#speech_transcribe_sync-python
   """
 
-  gcs_uri = upload_to_gcp(wav_path, gcp_creds_path)
+  gcs_uri = upload_to_gcp(wav_path, credentials)
 
-  # Set up credentials (from https://stackoverflow.com/a/65453693)
-  credentials = service_account.Credentials.from_service_account_file(gcp_creds_path)
-  scoped_credentials = credentials.with_scopes(["https://www.googleapis.com/auth/cloud-platform"])
   client = speech.SpeechClient(credentials=credentials)
 
   # Prepare audio data
@@ -80,7 +77,11 @@ def compress(wav_path, gcp_creds_path):
   - A transcript
   """
 
+  # Set up credentials (from https://stackoverflow.com/a/65453693)
+  credentials = service_account.Credentials.from_service_account_file(gcp_creds_path)
+  scoped_credentials = credentials.with_scopes(["https://www.googleapis.com/auth/cloud-platform"])
+
   clip = get_clip(wav_path)
-  transcript = get_transcript(wav_path, gcp_creds_path)
+  transcript = get_transcript(wav_path, credentials)
 
   return clip, transcript
