@@ -30,7 +30,7 @@ def upload_to_gcp(wav_path, credentials):
 
   assert speaker_role in ["agent", "caller"]
   destination_name = f"{speaker_role}-{wav_name}"
-  destination_uri = f"gs://${DATA_BUCKET_NAME}/${destination_name}"
+  destination_uri = f"gs://{DATA_BUCKET_NAME}/{destination_name}"
 
   bucket = storage.Client(credentials=credentials).bucket(DATA_BUCKET_NAME)
   blob = bucket.blob(destination_name)
