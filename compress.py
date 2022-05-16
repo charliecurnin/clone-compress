@@ -4,7 +4,7 @@ import librosa
 
 def get_clip(wav_path):
   
-  audio_ex, sr = librosa.load(agent_audio_file)
+  audio_ex, sr = librosa.load(wav_path)
   
   # Naive clipping method: Take first 10 seconds
   clip_duration_seconds = min(10, sr * len(audio_ex))
