@@ -39,7 +39,7 @@ def get_transcript(wav_path, gcp_creds_path):
 
   # Await response
   operation = client.long_running_recognize(config=config, audio=audio)
-  result = operation.result(timeout=90)
+  response = operation.result(timeout=90)
 
   # Parse response
   transcript = " ".join(result.alternatives[0].transcript for result in response.results)
