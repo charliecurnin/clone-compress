@@ -85,9 +85,3 @@ def compress(wav_path, gcp_creds_path):
   transcript = get_transcript(wav_path, credentials)
 
   return clip, transcript
-
-def compression_ratio(original_duration, compressed_duration, audio_sr):
-  
-  bit_depth = 16 
-  channels = 2 # stereo
-  return (audio_sr * (bit_depth/8) * channels * (compressed_duration/original_duration))
