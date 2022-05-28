@@ -7,3 +7,8 @@ pip install -q -r requirements.txt
 apt-get install -qq libportaudio2
 gdown https://drive.google.com/uc?id=1-Vohg3oaS82c0y_tJQx-J8123oWnkkwf
 unzip pretrained.zip
+
+# Create symlinks so can import like "from encoder import inference"
+ln -s -- Real-Time-Voice-Cloning/synthesizer synthesizer
+ln -s -- Real-Time-Voice-Cloning/encoder encoder
+ln -s -- Real-Time-Voice-Cloning/vocoder vocoder
