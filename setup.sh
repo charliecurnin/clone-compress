@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Set up Real-Time-Voice-Cloning
+# --- Set up Real-Time-Voice-Cloning ---
 git clone https://github.com/CorentinJ/Real-Time-Voice-Cloning
 cd Real-Time-Voice-Cloning/
 pip install -q -r requirements.txt
@@ -12,3 +12,8 @@ unzip pretrained.zip
 ln -s -- Real-Time-Voice-Cloning/synthesizer synthesizer
 ln -s -- Real-Time-Voice-Cloning/encoder encoder
 ln -s -- Real-Time-Voice-Cloning/vocoder vocoder
+
+# --- Get ready to use GCP ---
+pip install google-cloud-speech
+pip install protobuf==3.19
+
