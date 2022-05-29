@@ -5,6 +5,8 @@ import io
 import librosa
 import os
 
+from utils import upload_to_gcp
+
 from google.oauth2 import service_account
 
 """
