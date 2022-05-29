@@ -7,6 +7,10 @@ from pathlib import Path
 import numpy as np
 import librosa
 
+"""
+Adapted from https://colab.research.google.com/drive/1SWvpwlJH95_i-zjsro0m_Zw9I8sSqbLE?authuser=1#scrollTo=6NpQBkN_22Gi
+"""
+
 def decompress(original_wav, sampling_rate, text):
     encoder_weights = Path("encoder/saved_models/pretrained.pt")
     vocoder_weights = Path("vocoder/saved_models/pretrained/pretrained.pt")
