@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import os
+
 from google.cloud import storage
 
 DATA_BUCKET_NAME = "cs224s-audio-input"
