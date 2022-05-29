@@ -1,53 +1,63 @@
 #!/usr/bin/env python3
 
+import asyncio
 import io
 import librosa
 import os
 
-from google.cloud import speech, storage
 from google.oauth2 import service_account
 
-DATA_BUCKET_NAME = "cs224s-audio-input"
+"""
+-------- CLIP OPTIONS --------
+Which bit of audio to preserve to clone from?
+"""
 
-def get_clip(wav_path):
+def get_clip_first10(wav_path):
+  """
+  Take first 10 seconds of audio
+  """
   
   audio_ex, sr = librosa.load(wav_path)
-  
-  # Naive clipping method: Take first 10 seconds
   clip_duration_seconds = min(10, sr * len(audio_ex))
   n_frames = clip_duration_seconds * sr
-  audio_clip = audio_ex[:n_frames]
-  return audio_clip
+  return audio_ex[:n_frames]
 
-def upload_to_gcp(wav_path, credentials):
+def get_clip_first30(wav_path):
   """
-  Upload to GCP (since must upload files >60s anyway)
+  Take first 30 seconds of audio
   """
-
-  path_segments = wav_path.split(os.path.sep)
-  speaker_role = path_segments[-2]
-  wav_name = path_segments[-1]
-
-  assert speaker_role in ["agent", "caller"]
-  destination_name = f"{speaker_role}-{wav_name}"
-  destination_uri = f"gs://{DATA_BUCKET_NAME}/{destination_name}"
-
-  bucket = storage.Client(credentials=credentials).bucket(DATA_BUCKET_NAME)
-  blob = bucket.blob(destination_name)
-  blob.upload_from_filename(wav_path)
   
-  return destination_uri 
+  audio_ex, sr = librosa.load(wav_path)
+  clip_duration_seconds = min(30, sr * len(audio_ex))
+  n_frames = clip_duration_seconds * sr
+  return audio_ex[:n_frames]
 
-def get_transcript(wav_path, credentials):
+def get_clip_all(wav_path):
+  audio_ex, _ = librosa.load(wav_path)
+  return audio_ex
+
+CLIP_OPTIONS = {
+  "first10" : get_clip_first10,
+  "first30" : get_clip_first30,
+  "all" : get_clip_all
+}
+
+"""
+-------- TRANSCRIPT OPTIONS --------
+How to generate a transcript of the input audio? 
+"""
+
+def get_transcript_gcp(wav_path, credentials):
   """
   Use GCP Speech-to-Text API to transcribe audio
   Following example here: https://cloud.google.com/speech-to-text/docs/samples/
     speech-transcribe-sync#speech_transcribe_sync-python
   """
 
-  gcs_uri = upload_to_gcp(wav_path, credentials)
-
+  from google.cloud import speech
   client = speech.SpeechClient(credentials=credentials)
+
+  gcs_uri = upload_to_gcp(wav_path, credentials)
 
   # Prepare audio data
   with io.open(wav_path, "rb") as audio_f:
@@ -66,7 +76,31 @@ def get_transcript(wav_path, credentials):
 
   return transcript
 
-def compress(wav_path, gcp_creds_path):
+def get_transcript_deepgram(wav_path, _):
+
+  from deepgram import Deepgram
+  DEEPGRAM_SECRET = "0b0bc22e55c888ff90a98aec70e8b41a5a7d2b09"
+
+  async def transcribe():
+    """
+    Adapted from Deepgram instructional materials
+    """
+    client = Deepgram(DEEPGRAM_SECRET)
+    with open(wav_path, 'rb') as audio:
+      source = {'buffer': audio, 'mimetype': 'audio/wav'}
+      options = {'punctuate': True, 'language': 'en', 'model': 'general-enhanced'}
+      response = await client.transcription.prerecorded(source, options)
+      transcript = response['results']['channels'][0]['alternatives'][0]['transcript']
+      return transcript
+
+  return asyncio.run(transcribe())
+
+TRANSCRIPT_OPTIONS = {
+  'gcp': get_transcript_gcp,
+  'deepgram': get_transcript_deepgram,
+}
+
+def compress(wav_path, gcp_creds_path, clip_option, transcript_options):
   """
   Compress a single audio file:
 
@@ -81,7 +115,12 @@ def compress(wav_path, gcp_creds_path):
   credentials = service_account.Credentials.from_service_account_file(gcp_creds_path)
   scoped_credentials = credentials.with_scopes(["https://www.googleapis.com/auth/cloud-platform"])
 
-  clip = get_clip(wav_path)
-  transcript = get_transcript(wav_path, credentials)
+  # Generate clip
+  assert clip_option in CLIP_OPTIONS, f"Unknown clip option: {clip_option}"
+  clip = CLIP_OPTIONS[clip_option](wav_path)
+
+  # Generate transcript
+  assert transcript_option in TRANSCRIPT_OPTIONS, f"Unknown transcript_option: {transcript_option}"
+  transcript = TRANSCRIPT_OPTIONS[transcript_option](wav_path, credentials)
 
   return clip, transcript
