@@ -16,5 +16,4 @@ ln -s -- Real-Time-Voice-Cloning/vocoder vocoder
 
 # --- Get ready to use GCP ---
 pip install google-cloud-speech
-pip install protobuf==3.19
-
+#pip install protobuf==3.19
