@@ -7,7 +7,24 @@ from pathlib import Path
 import numpy as np
 import librosa
 
-def decompress(agent_audio_file, text):
+def decompress(original_wav, sampling_rate, text):
+    encoder_weights = Path("encoder/saved_models/pretrained.pt")
+    vocoder_weights = Path("vocoder/saved_models/pretrained/pretrained.pt")
+    syn_dir = Path("synthesizer/saved_models/logs-pretrained/taco_pretrained")
+    encoder.load_model(encoder_weights)
+    synthesizer = Synthesizer(syn_dir)
+    vocoder.load_model(vocoder_weights)
+    
+    preprocessed_wav = encoder.preprocess_wav(original_wav, sampling_rate)
+    embed = encoder.embed_utterance(preprocessed_wav)
+    with io.capture_output() as captured:
+        specs = synthesizer.synthesize_spectrograms([text], [embed])
+    generated_wav = vocoder.infer_waveform(specs[0])
+    generated_wav = np.pad(generated_wav, (0, synthesizer.sample_rate), mode="constant")
+    return (generated_wav, synthesizer.sample_rate)
+
+    
+def _decompress(agent_audio_file, text):
     encoder_weights = Path("encoder/saved_models/pretrained.pt")
     vocoder_weights = Path("vocoder/saved_models/pretrained/pretrained.pt")
     syn_dir = Path("synthesizer/saved_models/logs-pretrained/taco_pretrained")
@@ -22,6 +39,4 @@ def decompress(agent_audio_file, text):
         specs = synthesizer.synthesize_spectrograms([text], [embed])
     generated_wav = vocoder.infer_waveform(specs[0])
     generated_wav = np.pad(generated_wav, (0, synthesizer.sample_rate), mode="constant")
-    return (generated_wav, synthesizer.sample_rate)
-
-    
+    return (generated_wav, synthesizer.sample_rate)   
