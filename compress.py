@@ -85,7 +85,7 @@ def get_transcript_gcp(wav_path, credentials=None):
 
 def get_transcript_deepgram(wav_path, _=None):
 
-  print(f"g_t_d called with {wav_path}"
+  print(f"g_t_d called with {wav_path}")
   from deepgram import Deepgram
   DEEPGRAM_SECRET = "0b0bc22e55c888ff90a98aec70e8b41a5a7d2b09"
 
