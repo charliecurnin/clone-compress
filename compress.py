@@ -46,12 +46,17 @@ CLIP_OPTIONS = {
 How to generate a transcript of the input audio? 
 """
 
-def get_transcript_gcp(wav_path, credentials):
+def get_transcript_gcp(wav_path, credentials=None):
   """
   Use GCP Speech-to-Text API to transcribe audio
   Following example here: https://cloud.google.com/speech-to-text/docs/samples/
     speech-transcribe-sync#speech_transcribe_sync-python
   """
+
+  if credentials is None:
+    # Set up credentials (from https://stackoverflow.com/a/65453693)
+    _credentials = service_account.Credentials.from_service_account_file(gcp_creds_path)
+    credentials = credentials.with_scopes(["https://www.googleapis.com/auth/cloud-platform"])
 
   from google.cloud import speech
   client = speech.SpeechClient(credentials=credentials)
