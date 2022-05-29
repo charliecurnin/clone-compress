@@ -83,7 +83,7 @@ def get_transcript_gcp(wav_path, credentials=None):
 
   return transcript
 
-def get_transcript_deepgram(wav_path, _):
+def get_transcript_deepgram(wav_path, _=None):
 
   from deepgram import Deepgram
   DEEPGRAM_SECRET = "0b0bc22e55c888ff90a98aec70e8b41a5a7d2b09"
