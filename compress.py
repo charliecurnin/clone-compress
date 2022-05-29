@@ -20,7 +20,7 @@ def get_clip_first10(wav_path):
   audio_ex, sr = librosa.load(wav_path)
   clip_duration_seconds = min(10, sr * len(audio_ex))
   n_frames = clip_duration_seconds * sr
-  return audio_ex[:n_frames]
+  return audio_ex[:n_frames], sr
 
 def get_clip_first30(wav_path):
   """
@@ -30,11 +30,10 @@ def get_clip_first30(wav_path):
   audio_ex, sr = librosa.load(wav_path)
   clip_duration_seconds = min(30, sr * len(audio_ex))
   n_frames = clip_duration_seconds * sr
-  return audio_ex[:n_frames]
+  return audio_ex[:n_frames], sr
 
 def get_clip_all(wav_path):
-  audio_ex, _ = librosa.load(wav_path)
-  return audio_ex
+  return librosa.load(wav_path)
 
 CLIP_OPTIONS = {
   "first10" : get_clip_first10,
