@@ -55,7 +55,8 @@ def get_transcript_gcp(wav_path, credentials=None):
 
   if credentials is None:
     # Set up credentials (from https://stackoverflow.com/a/65453693)
-    _credentials = service_account.Credentials.from_service_account_file(gcp_creds_path)
+    GCP_CREDS_PATH = '/content/gdrive/MyDrive/cs224s-final-project-350323-b08c14f5739d.json' # shortcut
+    _credentials = service_account.Credentials.from_service_account_file(GCP_CREDS_PATH)
     credentials = _credentials.with_scopes(["https://www.googleapis.com/auth/cloud-platform"])
 
   from google.cloud import speech
