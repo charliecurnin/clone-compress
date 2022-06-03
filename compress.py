@@ -14,6 +14,36 @@ from google.oauth2 import service_account
 Which bit of audio to preserve to clone from?
 """
 
+def get_clip_first1(wav_path):
+  """
+  Take first 1 seconds of audio
+  """
+  
+  audio_ex, sr = librosa.load(wav_path)
+  clip_duration_seconds = min(1, sr * len(audio_ex))
+  n_frames = clip_duration_seconds * sr
+  return audio_ex[:n_frames], sr
+
+def get_clip_first3(wav_path):
+  """
+  Take first 3 seconds of audio
+  """
+  
+  audio_ex, sr = librosa.load(wav_path)
+  clip_duration_seconds = min(3, sr * len(audio_ex))
+  n_frames = clip_duration_seconds * sr
+  return audio_ex[:n_frames], sr
+
+def get_clip_first5(wav_path):
+  """
+  Take first 5 seconds of audio
+  """
+  
+  audio_ex, sr = librosa.load(wav_path)
+  clip_duration_seconds = min(5, sr * len(audio_ex))
+  n_frames = clip_duration_seconds * sr
+  return audio_ex[:n_frames], sr
+
 def get_clip_first10(wav_path):
   """
   Take first 10 seconds of audio
